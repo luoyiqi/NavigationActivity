@@ -141,7 +141,6 @@ public abstract class BaseActivity<V extends BaseView> extends Activity implemen
      */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void initDrawer() {
-        //  drawerLayout = new MyDrawerLayout(this);
         ImageView imageView = new ImageView(this);
         imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));

@@ -49,7 +49,8 @@ public class MyDrawerLayout extends RelativeLayout {
             if (left > 0) {
                 if (left < getChildAt(0).getWidth() / 4) {
                     getChildAt(0).layout(0 - getChildAt(0).getWidth() +
-                            getChildAt(0).getWidth() / 4, 0, getChildAt(0).getWidth() / 4, getChildAt(0).getHeight());
+                            getChildAt(0).getWidth() / 4, 0, getChildAt(0).getWidth() / 4
+                            , getChildAt(0).getHeight());
                 } else {
                     getChildAt(0).layout(0 - getChildAt(0).getWidth() + left
                             , 0, left, getChildAt(0).getHeight());
