@@ -1,19 +1,24 @@
 package com.example.administrator.navigationactivity.base;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Outline;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.ViewDragHelper;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+
+import com.example.administrator.navigationactivity.R;
 
 import static android.view.View.OnTouchListener;
 
@@ -23,10 +28,14 @@ import static android.view.View.OnTouchListener;
  */
 public abstract class BaseActivity<V extends BaseView> extends Activity implements OnTouchListener {
     protected V view;
-    /**上一个activity**/
+    /**
+     * 上一个activity
+     **/
     public static Bitmap prevActivityShotBitmap;
 
-    /**是否使用右滑返回**/
+    /**
+     * 是否使用右滑返回
+     **/
     public static boolean userRightSlide = false;
 
     public DrawerLayout drawerLayout;
@@ -37,9 +46,9 @@ public abstract class BaseActivity<V extends BaseView> extends Activity implemen
         try {
             view = getVClass().newInstance();
             view.init(getLayoutInflater(), null);
-            if(userRightSlide && prevActivityShotBitmap!=null){
+            if (userRightSlide && prevActivityShotBitmap != null) {
                 initDrawer();
-            }else{
+            } else {
                 setContentView(view.getView());
             }
             onBindV();
@@ -55,13 +64,15 @@ public abstract class BaseActivity<V extends BaseView> extends Activity implemen
     @Override
     protected void onDestroy() {
         onDestroyV();
-        view.onDestroy();;
+        view.onDestroy();
+        ;
         view = null;
         super.onDestroy();
     }
 
     /**
      * 获取需要展示的view
+     *
      * @return
      */
     protected abstract Class<V> getVClass();
@@ -75,10 +86,8 @@ public abstract class BaseActivity<V extends BaseView> extends Activity implemen
     }
 
 
-
     protected void onDestroyV() {
     }
-
 
 
     public interface DataHelper {
@@ -107,6 +116,7 @@ public abstract class BaseActivity<V extends BaseView> extends Activity implemen
 
     /***
      * 获取当前窗口的截图
+     *
      * @return
      */
     public Bitmap getActivityShotBitmap() {
@@ -129,55 +139,36 @@ public abstract class BaseActivity<V extends BaseView> extends Activity implemen
     /**
      * 加载抽屉
      */
-    public void initDrawer(){
-        drawerLayout = new MyDrawerLayout(this);
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void initDrawer() {
+        //  drawerLayout = new MyDrawerLayout(this);
         ImageView imageView = new ImageView(this);
         imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
         imageView.setImageBitmap(prevActivityShotBitmap);
+        MyDrawerLayout drawerLayout = new MyDrawerLayout(this);
         drawerLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
         drawerLayout.addView(imageView);
-        Display display = getWindowManager().getDefaultDisplay();
-        int widths = display.getWidth();
-        int heights = display.getHeight();
-        DrawerLayout.LayoutParams layoutParams = new DrawerLayout.LayoutParams(widths,
-                heights);
-        layoutParams.gravity = Gravity.RIGHT;
-        view.getView().setLayoutParams(layoutParams);
-        drawerLayout.addView(view.getView());
-        //drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        drawerLayout.openDrawer(GravityCompat.END);
-        drawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+        View rightView = view.getView();
+        rightView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT));
+      //  rightView.setElevation(30.0f);
+        rightView.setBackgroundResource(R.drawable.right_view_background);
+        drawerLayout.addView(rightView);
+        setContentView(drawerLayout);
+        drawerLayout.setDrawerListener(new MyDrawerLayout.DrawerListener() {
             @Override
-            public void onDrawerSlide(View view, float v) {
-
-            }
-
-            @Override
-            public void onDrawerOpened(View view) {
-
-            }
-
-            @Override
-            public void onDrawerClosed(View view) {
-                //当抽屉关闭时，关闭当前activity
+            public void close() {
                 finish();
-
-            }
-
-            @Override
-            public void onDrawerStateChanged(int i) {
-
             }
         });
-      //  view.getView().setOnTouchListener(this);
-        setContentView(drawerLayout);
+
     }
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
-        if(motionEvent.getAction() == MotionEvent.ACTION_DOWN&&motionEvent.getX()<20){
+        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN && motionEvent.getX() < 20) {
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
         }
         return super.onTouchEvent(motionEvent);
