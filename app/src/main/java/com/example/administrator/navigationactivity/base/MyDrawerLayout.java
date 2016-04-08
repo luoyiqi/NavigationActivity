@@ -47,10 +47,16 @@ public class MyDrawerLayout extends RelativeLayout {
         @Override
         public int clampViewPositionHorizontal(View child, int left, int dx) {
             if (left > 0) {
-                if (left < getChildAt(0).getWidth() / 4) {
-                    getChildAt(0).layout(0 - getChildAt(0).getWidth() +
-                            getChildAt(0).getWidth() / 4, 0, getChildAt(0).getWidth() / 4
-                            , getChildAt(0).getHeight());
+                if (left < getChildAt(0).getWidth() / 3) {
+                    if (left < getChildAt(1).getLeft()) {
+                        getChildAt(0).layout(getChildAt(0).getLeft() + (getChildAt(1).getLeft() - left),
+                                0, getChildAt(0).getLeft() + (getChildAt(1).getLeft() - left)
+                                        + getChildAt(0).getWidth(), getChildAt(0).getHeight());
+                    } else {
+                        getChildAt(0).layout(0 - getChildAt(0).getWidth() +
+                                getChildAt(0).getWidth() / 3, 0, getChildAt(0).getWidth() / 3
+                                , getChildAt(0).getHeight());
+                    }
                 } else {
                     getChildAt(0).layout(0 - getChildAt(0).getWidth() + left
                             , 0, left, getChildAt(0).getHeight());
